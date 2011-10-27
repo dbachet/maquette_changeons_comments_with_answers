@@ -15,6 +15,9 @@ class PostsController < ApplicationController
   def show
     @post = Post.find(params[:id])
 
+    @comment = Comment.new
+    @comments = Comment.all
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @post }
@@ -41,6 +44,12 @@ class PostsController < ApplicationController
   # POST /posts.xml
   def create
     @post = Post.new(params[:post])
+    puts "** TEST COMMENT **"
+    @comment = Comment.build_from( @post, current_user, "Hey guys this is my comment! But that's a test ;)" )
+    
+    @comment.save
+    @comment.move_to_child_of(Comment.all.first)
+    puts "** END TEST COMMENT **"
 
     respond_to do |format|
       if @post.save
